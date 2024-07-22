@@ -7,11 +7,19 @@ pipeline {
 			}
 		}
 
-		stage('OWASP DependencyCheck') {
-			steps {
-				dependencyCheck additionalArguments: '--format HTML --format XML --suppression suppression.xml', odcInstallation: 'Default'
-			}
-		}
+		stage('OWASP Dependency-Check Vulnerabilities') {
+            steps {
+                echo 'Starting Dependency-Check...'
+                dependencyCheck additionalArguments: ''' 
+                    -o './'
+                    -s './'
+                    -f 'ALL' 
+                    --prettyPrint''', 
+                    odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
+                
+                dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
+        }
 	}	
 	post {
 		success {
